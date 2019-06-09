@@ -2,8 +2,8 @@
   "name": "my_portfolio",
   "version": "1.0.0",
   "description": "Responsive Portfolio Website",
-  "main": "index.js",
-  "homepage": "https://smarty0123.github.io/portfolio",
+  "main": "index.html",
+  "homepage": "https://smarty0123.github.io/portfolio/",
   "scripts": {
     "sass": "node-sass -w scss/ -o dist/css/ --recursive",
     "deploy": "gh-pages -d dist"
