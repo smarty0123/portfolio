@@ -156,7 +156,8 @@ main {
   main#home {
     overflow: hidden; }
     main#home h1 {
-      padding: 1rem;
+      font-size: 8vw;
+      padding: 1rem 0px;
       margin-top: 20vh;
       color: #ecce1a; }
 
