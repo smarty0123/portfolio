@@ -69,7 +69,9 @@ main {
   &#home {
     overflow: hidden;
     h1 {
+      padding: 1rem;
       margin-top: 20vh;
+      color: $secondary-color;
     }
   }
 }
