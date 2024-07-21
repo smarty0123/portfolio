@@ -170,7 +170,8 @@ main {
     grid-area: bioimage;
     margin: auto;
     border-radius: 50%;
-    border: #0f0 3px solid; }
+    border: #0f0 3px solid;
+    width: 100%; }
   .about-info .bio {
     grid-area: bio; }
   .about-info .job-1 {
