@@ -171,7 +171,7 @@ main {
     margin: auto;
     border-radius: 50%;
     border: #0f0 3px solid;
-    width: 100%; }
+    width: 50%; }
   .about-info .bio {
     grid-area: bio; }
   .about-info .job-1 {
