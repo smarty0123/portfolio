@@ -72,7 +72,16 @@ main {
       font-size: 8vw;
       padding: 1rem 0px;
       margin-top: 20vh;
-      color: $secondary-color;
+      color: $white-color;
+      text-shadow:
+      0 0 7px $white-color,
+      0 0 10px $white-color,
+      0 0 21px $white-color,
+      0 0 42px $secondary-color,
+      0 0 82px $secondary-color,
+      0 0 92px $secondary-color,
+      0 0 102px $secondary-color,
+      0 0 151px $secondary-color;
     }
   }
 }
