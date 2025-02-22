@@ -86,4 +86,7 @@ window.onload = function () {
   var css = document.createElement("style");
   css.innerHTML = ".typewrite > .wrap { border-right: 0.08em solid #fff}";
   document.body.appendChild(css);
+
+  // Automatically update copyright year
+  document.getElementById('year').textContent = new Date().getFullYear();
 };
