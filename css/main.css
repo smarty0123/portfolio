@@ -158,9 +158,22 @@ main {
     main#home h1 {
       font-size: 8vw;
       padding: 1rem 0px;
-      margin-top: 20vh;
-      color: #fff;
-      text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #0f0, 0 0 82px #0f0, 0 0 92px #0f0, 0 0 102px #0f0, 0 0 151px #0f0; }
+      margin-top: 20vh; }
+      main#home h1 .wrap {
+        display: inline-block;
+        background: linear-gradient(90deg, #00fff0, #00bfff, #8f00ff, #ff00ea, #ff0099, #00ffb3);
+        background-size: 200% 100%;
+        background-position: left center;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        animation: gradient-move 2s linear infinite; }
+
+@keyframes gradient-move {
+  0% {
+    background-position: left center; }
+  100% {
+    background-position: right center; } }
 
 .about-info {
   display: grid;

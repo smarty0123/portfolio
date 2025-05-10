@@ -50,7 +50,13 @@ TxtType.prototype.tick = function () {
     this.txt = fullTxt.substring(0, this.txt.length + 1);
   }
 
-  this.el.innerHTML = '<span class="wrap">' + this.txt + "</span>";
+  // Wrap each character in a span with animation delay
+  var wrappedTxt = '';
+  for (var j = 0; j < this.txt.length; j++) {
+    var char = this.txt[j] === ' ' ? '&nbsp;' : this.txt[j];
+    wrappedTxt += '<span style="--char-index: ' + j + '">' + char + '</span>';
+  }
+  this.el.innerHTML = '<span class="wrap">' + wrappedTxt + '</span>';
 
   var that = this;
   var delta = 200 - Math.random() * 100;
