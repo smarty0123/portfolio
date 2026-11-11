@@ -13,8 +13,12 @@
   let currentIdx = 0;
   let returnFocus = null;
 
-  // Image URLs: grid uses 480px thumbs; the lightbox picks a 1600/3000px size via srcset
+  // Image URLs: grid picks a 480/960px-wide thumb via srcset; the lightbox a 1600/3000px size
   const thumbUrl = (img) => 'gallery/thumbs/' + img.file;
+  const thumbSrcset = (img) =>
+    `gallery/thumbs/${img.file} 480w, gallery/thumbs/960/${img.file} 960w`;
+  // Column width: two columns on phones, three (inside the 1100px page) from desktop up
+  const THUMB_SIZES = '(min-width: 900px) 350px, 50vw';
   const originalUrl = (img) => 'gallery/' + img.file;
   const largeSrcset = (img) =>
     `gallery/large/1600/${img.file} 1600w, gallery/large/3000/${img.file} 3000w`;
@@ -89,10 +93,12 @@
       item.setAttribute('aria-label', 'Open ' + describe(img));
 
       const thumb = el('img');
-      thumb.src = thumbUrl(img);
-      thumb.alt = describe(img);
       thumb.loading = 'lazy';
       thumb.decoding = 'async';
+      thumb.sizes = THUMB_SIZES;
+      thumb.srcset = thumbSrcset(img);
+      thumb.src = thumbUrl(img);
+      thumb.alt = describe(img);
       // reserve the right box before the thumb loads (no layout shift)
       if (img.w && img.h) { thumb.width = img.w; thumb.height = img.h; }
 
@@ -112,14 +118,26 @@
     document.body.style.overflow = 'hidden';
     updateLightbox();
     lbClose.focus();
+    // Give the phone Back button/gesture something to close instead of leaving the site
+    try { history.pushState({ lightbox: true }, ''); } catch (e) {}
   }
 
-  function closeLightbox() {
+  function hideLightbox() {
     lightbox.classList.remove('open');
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     if (returnFocus) returnFocus.focus();
   }
+
+  // Close from the UI: unwind the history entry we pushed; popstate does the hiding
+  function closeLightbox() {
+    if (history.state && history.state.lightbox) history.back();
+    else hideLightbox();
+  }
+
+  window.addEventListener('popstate', () => {
+    if (lightbox.classList.contains('open')) hideLightbox();
+  });
 
   function step(delta) {
     currentIdx = (currentIdx + delta + filtered.length) % filtered.length;
@@ -152,7 +170,8 @@
 
     // Show the (already cached) thumb instantly, then swap in the sharp size once it's loaded
     lbImg.removeAttribute('srcset');
-    lbImg.src = thumbUrl(img);
+    const gridThumb = grid.children[currentIdx] && grid.children[currentIdx].querySelector('img');
+    lbImg.src = (gridThumb && gridThumb.currentSrc) || thumbUrl(img);
     lbImg.alt = describe(img);
     const sharp = new Image();
     sharp.sizes = sizesFor(img);
@@ -190,12 +209,15 @@
   // Swipe navigation on touch screens
   let touchStartX = null;
   lightbox.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].clientX;
+    // a second finger means pinch-zoom, not a swipe
+    touchStartX = e.touches.length > 1 ? null : e.changedTouches[0].clientX;
   }, { passive: true });
   lightbox.addEventListener('touchend', (e) => {
     if (touchStartX === null) return;
     const dx = e.changedTouches[0].clientX - touchStartX;
     touchStartX = null;
+    // while zoomed in, a drag pans the photo — don't change it
+    if (window.visualViewport && window.visualViewport.scale > 1.01) return;
     if (Math.abs(dx) < 40) return;
     step(dx < 0 ? 1 : -1);
   }, { passive: true });
