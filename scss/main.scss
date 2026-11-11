@@ -1,109 +1,311 @@
-@import "config";
-@import "menu";
-
+@use "config" as *;
+@use "gallery";
 
 * {
   box-sizing: border-box;
 }
 
-body {
-  @include background;
-  background: $primary-color;
-  color: set-text-color($primary-color);
-  height: 100%;
-  margin: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.5;
+html {
+  scroll-behavior: smooth;
+  // keep anchor targets clear of the sticky header
+  scroll-padding-top: 4.5rem;
 }
 
-//Heading
-h1,
-h2,
-h3 {
+body {
   margin: 0;
-  font-weight: 400;
-
-  &.lg-heading {
-    font-size: 4rem;
-  }
-
-  &.sm-heading {
-    margin-bottom: 2rem;
-    padding: 0.2rem 1rem;
-    background: lighten($primary-color, 2);
-  }
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.25s ease-out, color 0.25s ease-out;
 }
 
 a {
-  color: #fff;
+  color: var(--accent);
   text-decoration: none;
+  @include easeOut;
+
+  &:hover {
+    color: var(--accent-hover);
+  }
 }
 
-header {
-  position: fixed;
-  z-index: 2;
+// Visible keyboard focus everywhere (gallery items and the lightbox refine this)
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.text-secondary {
+  color: var(--accent);
+}
+
+//Sticky header — scroll is the navigation; these anchors are shortcuts
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
+  padding: 1rem 1.25rem;
+  background: var(--header-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--header-border);
+
+  @include tabletUp {
+    padding: 1rem 2rem;
+  }
+}
+
+.site-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+
+  &:hover {
+    color: var(--accent);
+  }
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+
+  a {
+    font-size: 0.9rem;
+    color: var(--muted);
+    // comfortable touch target
+    padding: 0.5rem 0.25rem;
+
+    &:hover {
+      color: var(--text);
+    }
+  }
+
+  @include tabletUp {
+    gap: 1.75rem;
+
+    a {
+      font-size: 0.95rem;
+    }
+  }
+}
+
+//Theme toggle — sun shown in dark mode, moon in light
+.theme-toggle {
+  display: inline-flex;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--muted);
+  @include easeOut;
+
+  &:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
+
+  .icon-moon {
+    display: none;
+  }
+}
+
+[data-theme="light"] .theme-toggle {
+  .icon-sun {
+    display: none;
+  }
+
+  .icon-moon {
+    display: block;
+  }
 }
 
 main {
-  padding: 4rem;
-  min-height: calc(100vh - 60px);
+  flex: 1;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
 
-  .text-secondary{
-      color: $secondary-color;
+  @include tabletUp {
+    padding: 0 2rem;
+  }
+}
+
+//Hero — compact so the gallery peeks above the fold on a phone
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero {
+  padding: 3rem 0 2.5rem;
+
+  @include desktopUp {
+    padding: 5rem 0 4rem;
   }
 
-  .icons {
-    margin-top: 1rem;
+  .hero-title {
+    font-size: clamp(2.25rem, 9vw, 4.5rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0 0 0.75rem;
+    animation: fade-up 0.6s ease-out both;
 
-    a {
-      padding: 0.4rem;
+    .accent {
+      font-weight: 500;
+    }
 
-      &:hover {
-        color: $secondary-color;
-        @include easeOut();
-      }
+    .kaomoji {
+      font-size: 0.5em;
+      color: var(--muted);
+      vertical-align: middle;
+      white-space: nowrap;
     }
   }
 
-  &#home {
-    overflow: hidden;
-    h1 {
-      font-size: 8vw;
-      padding: 1rem 0px;
-      margin-top: 20vh;
-      color: $white-color;
-      text-shadow:
-      0 0 7px $white-color,
-      0 0 10px $white-color,
-      0 0 21px $white-color,
-      0 0 42px $secondary-color,
-      0 0 82px $secondary-color,
-      0 0 92px $secondary-color,
-      0 0 102px $secondary-color,
-      0 0 151px $secondary-color;
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    margin: 0 0 1.75rem;
+    animation: fade-up 0.6s ease-out 0.1s both;
+  }
+
+  .icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    animation: fade-up 0.6s ease-out 0.2s both;
+
+    a {
+      display: inline-flex;
+      // 44px touch target
+      padding: 0.65rem;
+      border-radius: 8px;
+      color: var(--muted);
+
+      &:hover {
+        color: var(--accent);
+        background: var(--accent-soft);
+      }
+
+      svg {
+        display: block;
+        width: 22px;
+        height: 22px;
+      }
     }
   }
 }
 
+//Sections
+.section {
+  padding: 3rem 0;
+  border-top: 1px solid var(--border);
+
+  @include desktopUp {
+    padding: 4.5rem 0;
+  }
+}
+
+.section-title {
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 0.25rem;
+}
+
+.section-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0 0 2rem;
+}
+
+//About section
 .about-info {
   display: grid;
-  grid-gap: 30px;
+  grid-gap: 1.5rem;
   grid-template-areas:
-    "bioimage bio"
-    "job1 job2";
-  grid-template-columns: repeat(2, 1fr);
+    "bioimage"
+    "bio"
+    "job1"
+    "job2";
+  grid-template-columns: 1fr;
+
+  @include tabletUp {
+    grid-gap: 2rem;
+    grid-template-areas:
+      "bioimage bio"
+      "job1 job2";
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   .bio-image {
     grid-area: bioimage;
+    display: block;
     margin: auto;
+    width: 55%;
+    // width/height attributes reserve the box; keep the ratio as the width scales
+    height: auto;
+    max-width: 240px;
     border-radius: 50%;
-    border: $secondary-color 3px solid;
-    width: 50%;
+    border: 3px solid var(--accent);
+
+    @include tabletUp {
+      width: 60%;
+      max-width: 280px;
+    }
   }
 
   .bio {
     grid-area: bio;
+
+    h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0 0 1rem;
+      color: var(--muted);
+
+      &:first-of-type {
+        color: var(--text);
+        font-weight: 500;
+      }
+    }
   }
 
   .job-1 {
@@ -115,92 +317,84 @@ main {
   }
 
   .job {
-    background: lighten($primary-color, 5);
-    padding: 0.5rem;
-    border-bottom: $secondary-color 5px solid;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+
+    h3 {
+      margin: 0 0 0.25rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .job-dates {
+      margin: 0 0 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+    }
   }
 }
 
-//Projects
-.projects{
-    display: grid;
-    grid-gap: 0.7rem;
-    grid-template-columns: repeat(3, 1fr);
-    img{
-        width: 100%;
-        height: 300px;
-        border: 3px #fff solid;
-        &:hover{
-            opacity: 0.5;
-            border-color: $secondary-color;
-            @include easeOut;
-        }
-    }
-}
-.moreprojects{
-  text-align: center;
-  padding-top: 20px;
-}
+//Contact section
+.boxes {
+  max-width: 560px;
 
-//Contact Page
-.boxes{
+  div {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-items: center;
-    margin-top: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--border);
 
-    div{
-        font-size: 1rem;
-        border: 3px #fff solid;
-        padding: 1.5rem 2rem;
-        margin-bottom: 3rem;
-       @include easeOut;
-
-       &:hover{
-           padding: 0.5rem 1.5rem;
-           background: $secondary-color;
-           color: set-text-color($secondary-color);
-           span{
-               color: set-text-color($secondary-color);
-           }
-
-       }
+    span {
+      color: var(--text);
+      font-weight: 500;
     }
-}
 
-//Button Styles
-.btn{
-    display: block;
-    padding: 0.5rem 1rem;
-    border: 0;
-    margin-bottom: 0.3rem;
-    &:hover{
-        background: $secondary-color;
-        color: set-text-color($secondary-color);
+    @include tabletUp {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 0;
     }
+  }
 }
 
-.btn-dark{
-    @extend .btn;
-    background: darken($primary-color, 50);
-    color: #fff;
+//Respect reduced-motion preferences
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
-.btn-light{
-    @extend .btn;
-    background: lighten($primary-color, 50);
-    color: #333;
+//Footer
+#main-footer {
+  text-align: center;
+  padding: 1.5rem;
+  // clear the iPhone home indicator
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  margin-top: 3rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
 }
 
-
-
-#main-footer{
-    text-align: center;
-    padding: 1rem;
-    background: darken($primary-color, 10);
-    color: set-text-color($primary-color);
-    height: 60px;
-}
-
-@import "mobile";

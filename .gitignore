@@ -1,1 +1,12 @@
+# dependencies
 **/node_modules
+
+# macOS cruft
+.DS_Store
+
+# AI/agent tooling (local only)
+.agents/
+skills-lock.json
+
+# photo publishing staging area — photos move into dist/gallery/ via `npm run photos`
+incoming/

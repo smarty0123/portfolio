@@ -2,16 +2,18 @@
   "name": "my_portfolio",
   "version": "1.0.0",
   "description": "Responsive Portfolio Website",
-  "main": "index.js",
-  "homepage": "https://smarty0123.github.io/portfolio/",
+  "homepage": "https://9smart.life/",
   "scripts": {
-    "sass": "node-sass -w scss/ -o dist/css/ --recursive",
-    "deploy": "gh-pages -d dist"
+    "sass": "sass --watch --no-source-map scss/main.scss:dist/css/main.css",
+    "build:css": "sass --no-source-map scss/main.scss dist/css/main.css",
+    "photos": "node scripts/add-photos.js",
+    "images": "node scripts/rebuild-images.js",
+    "deploy": "npm run build:css && gh-pages -d dist"
   },
   "author": "Smart",
   "license": "MIT",
-  "dependencies": {
-    "gh-pages": "^3.1.0",
-    "node-sass": "^7.0.0"
+  "devDependencies": {
+    "gh-pages": "^6.0.0",
+    "sass": "^1.92.1"
   }
 }
