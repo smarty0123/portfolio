@@ -68,6 +68,11 @@
     appendBatch();
   }
 
+  // Real caption, or null when it's just a camera filename like "IMG 1026"
+  const CAMERA_NAME = /^(IMG|DSC|DSCF|PXL)[\s_-]?\d+$/i;
+  const realCaption = (img) => (img.caption && !CAMERA_NAME.test(img.caption.trim()) ? img.caption : null);
+  const describe = (img) => realCaption(img) || (img.category ? img.category + ' photo' : 'Photo');
+
   function el(tag, className, text) {
     const node = document.createElement(tag);
     if (className) node.className = className;
@@ -81,21 +86,17 @@
       const idx = renderedCount + i;
       const item = el('button', 'gallery-item');
       item.type = 'button';
-      item.setAttribute('aria-label', 'Open photo: ' + (img.caption || img.file));
+      item.setAttribute('aria-label', 'Open ' + describe(img));
 
       const thumb = el('img');
       thumb.src = thumbUrl(img);
-      thumb.alt = img.caption || '';
+      thumb.alt = describe(img);
       thumb.loading = 'lazy';
       thumb.decoding = 'async';
       // reserve the right box before the thumb loads (no layout shift)
       if (img.w && img.h) { thumb.width = img.w; thumb.height = img.h; }
 
-      const overlay = el('div', 'overlay');
-      if (img.category) overlay.append(el('span', 'tag', img.category));
-      if (img.caption) overlay.append(el('span', 'caption', img.caption));
-
-      item.append(thumb, overlay);
+      item.append(thumb);
       item.addEventListener('click', () => openLightbox(idx));
       grid.appendChild(item);
     });
@@ -152,7 +153,7 @@
     // Show the (already cached) thumb instantly, then swap in the sharp size once it's loaded
     lbImg.removeAttribute('srcset');
     lbImg.src = thumbUrl(img);
-    lbImg.alt = img.caption || '';
+    lbImg.alt = describe(img);
     const sharp = new Image();
     sharp.sizes = sizesFor(img);
     sharp.srcset = largeSrcset(img);
@@ -163,7 +164,7 @@
       lbImg.src = sharp.currentSrc;
     };
 
-    lbCaption.textContent = img.caption || '';
+    lbCaption.textContent = realCaption(img) || '';
     lbCounter.textContent = (currentIdx + 1) + ' / ' + filtered.length;
     lbOriginal.href = originalUrl(img);
 
