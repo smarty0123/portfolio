@@ -20,7 +20,7 @@ applyTheme(document.documentElement.dataset.theme || "dark");
 if (themeToggle) {
   themeToggle.addEventListener("click", () => {
     const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-    localStorage.setItem("theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) {}
     applyTheme(next);
   });
 }

@@ -26,6 +26,237 @@
   --header-border: rgba(228, 228, 228, 0.6);
 }
 
+.gallery-filters {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.gallery-filters button {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease-out;
+}
+.gallery-filters button:hover, .gallery-filters button.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.gallery-grid {
+  columns: 2;
+  column-gap: 10px;
+}
+@media screen and (min-width: 900px) {
+  .gallery-grid {
+    columns: 3;
+    column-gap: 12px;
+  }
+}
+
+.gallery-item {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  break-inside: avoid;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.gallery-item:hover, .gallery-item:focus-visible {
+  transform: scale(1.015);
+}
+.gallery-item:hover img, .gallery-item:focus-visible img {
+  filter: brightness(0.75);
+}
+.gallery-item:hover .overlay, .gallery-item:focus-visible .overlay {
+  transform: translateY(0);
+}
+.gallery-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+  transition: filter 0.3s ease;
+}
+.gallery-item .overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.gallery-item .overlay .caption {
+  display: block;
+  font-size: 0.85rem;
+  color: #fff;
+}
+.gallery-item .overlay .tag {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+@media (hover: none) {
+  .gallery-item .overlay {
+    transform: translateY(0);
+  }
+}
+
+.gallery-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+}
+.gallery-empty svg {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1rem;
+  color: var(--border);
+}
+
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.93);
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.lightbox.open {
+  display: flex;
+  opacity: 1;
+}
+.lightbox img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+  background: none;
+  border: none;
+  z-index: 101;
+  transition: color 0.3s;
+}
+.lightbox-close:hover {
+  color: #aaa;
+}
+
+.lightbox-nav {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 1rem;
+  z-index: 101;
+  transition: color 0.3s;
+}
+@media screen and (min-width: 600px) {
+  .lightbox-nav {
+    display: block;
+  }
+}
+.lightbox-nav:hover {
+  color: #aaa;
+}
+.lightbox-nav svg {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.lightbox-prev {
+  left: 10px;
+}
+
+.lightbox-next {
+  right: 10px;
+}
+
+.lightbox-footer {
+  position: absolute;
+  bottom: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0.25rem 1.25rem;
+  text-align: center;
+}
+
+.lightbox-caption {
+  color: #aaa;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.lightbox-original {
+  color: #aaa;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lightbox-original:hover {
+  color: #fff;
+}
+
+.lightbox-close:focus-visible,
+.lightbox-nav:focus-visible,
+.lightbox-original:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.lightbox-counter {
+  position: absolute;
+  top: 25px;
+  left: 30px;
+  color: #888;
+  font-size: 0.85rem;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -347,6 +578,18 @@ main {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 #main-footer {
   text-align: center;
   padding: 1.5rem;
@@ -355,191 +598,4 @@ main {
   font-size: 0.85rem;
   color: var(--muted);
   border-top: 1px solid var(--border);
-}
-
-.gallery-filters {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
-}
-.gallery-filters button {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  padding: 0.5rem 1.2rem;
-  border-radius: 50px;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
-  transition: all 0.25s ease-out;
-}
-.gallery-filters button:hover, .gallery-filters button.active {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.gallery-grid {
-  columns: 2;
-  column-gap: 10px;
-}
-@media screen and (min-width: 900px) {
-  .gallery-grid {
-    columns: 3;
-    column-gap: 12px;
-  }
-}
-
-.gallery-item {
-  break-inside: avoid;
-  margin-bottom: 12px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-.gallery-item:hover {
-  transform: scale(1.015);
-}
-.gallery-item:hover img {
-  filter: brightness(0.75);
-}
-.gallery-item:hover .overlay {
-  transform: translateY(0);
-}
-.gallery-item img {
-  width: 100%;
-  display: block;
-  border-radius: 6px;
-  transition: filter 0.3s ease;
-}
-.gallery-item .overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 1rem;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-}
-.gallery-item .overlay .caption {
-  display: block;
-  font-size: 0.85rem;
-  color: #fff;
-}
-.gallery-item .overlay .tag {
-  display: block;
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.gallery-empty {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: var(--muted);
-}
-.gallery-empty svg {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1rem;
-  color: var(--border);
-}
-
-.lightbox {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: rgba(0, 0, 0, 0.93);
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.lightbox.open {
-  display: flex;
-  opacity: 1;
-}
-.lightbox img {
-  max-width: 90vw;
-  max-height: 85vh;
-  border-radius: 6px;
-  object-fit: contain;
-}
-
-.lightbox-close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 2rem;
-  color: #fff;
-  cursor: pointer;
-  background: none;
-  border: none;
-  z-index: 101;
-  transition: color 0.3s;
-}
-.lightbox-close:hover {
-  color: #aaa;
-}
-
-.lightbox-nav {
-  display: none;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #fff;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 1rem;
-  z-index: 101;
-  transition: color 0.3s;
-}
-@media screen and (min-width: 600px) {
-  .lightbox-nav {
-    display: block;
-  }
-}
-.lightbox-nav:hover {
-  color: #aaa;
-}
-.lightbox-nav svg {
-  display: block;
-  width: 32px;
-  height: 32px;
-}
-
-.lightbox-prev {
-  left: 10px;
-}
-
-.lightbox-next {
-  right: 10px;
-}
-
-.lightbox-caption {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #aaa;
-  font-size: 0.9rem;
-  text-align: center;
-  letter-spacing: 1px;
-}
-
-.lightbox-counter {
-  position: absolute;
-  top: 25px;
-  left: 30px;
-  color: #888;
-  font-size: 0.85rem;
 }
